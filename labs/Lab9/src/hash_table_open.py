@@ -68,7 +68,24 @@ class HashTableOpen:
             key:   The key to insert.
             value: The value to associate with the key.
         """
-        pass  # TODO: implement this
+        # TODO: implement this
+        start = self._hash(key)
+
+        for step in range(self.size):
+            index = (start + step) % self.size
+            slot = self.table[index]
+
+            if slot is None or slot is _TOMBSTONE:
+                self.table[index] = (key, value)
+                self.count += 1
+                return
+
+            k, _ = slot
+            if k == key:
+                self.table[index] = (key, value)
+                return
+
+        raise Exception("Hash table is full")
 
     # ── TODO 3: Get ───────────────────────────────────────────────
 
@@ -96,7 +113,24 @@ class HashTableOpen:
         Raises:
             KeyError: If the key is not found.
         """
-        pass  # TODO: implement this
+        # TODO: implement this
+        start = self._hash(key)
+
+        for step in range(self.size):
+            index = (start + step) % self.size
+            slot = self.table[index]
+
+            if slot is None:
+                raise KeyError(key)
+
+            if slot is _TOMBSTONE:
+                continue
+
+            k, v = slot
+            if k == key:
+                return v
+
+        raise KeyError(key)
 
     # ── TODO 4: Delete ────────────────────────────────────────────
 
@@ -120,7 +154,26 @@ class HashTableOpen:
         Raises:
             KeyError: If the key is not found.
         """
-        pass  # TODO: implement this
+        # TODO: implement this
+        start = self._hash(key)
+
+        for step in range(self.size):
+            index = (start + step) % self.size
+            slot = self.table[index]
+
+            if slot is None:
+                raise KeyError(key)
+
+            if slot is _TOMBSTONE:
+                continue
+
+            k, _ = slot
+            if k == key:
+                self.table[index] = _TOMBSTONE
+                self.count -= 1
+                return
+
+        raise KeyError(key)
 
     # ── Provided Methods (do not modify) ──────────────────────────
 
