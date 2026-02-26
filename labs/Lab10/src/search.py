@@ -27,7 +27,12 @@ def sequential_search(a_list, target):
     Returns:
         True if target is found, False otherwise.
     """
-    pass  # TODO: implement this
+    # TODO: implement this
+    for i in a_list:
+        if i == target:
+            return True
+
+    return False
 
 
 # ── TODO 2: Binary Search ────────────────────────────────────────
@@ -56,7 +61,8 @@ def binary_search(a_list, target):
     Returns:
         True if target is found, False otherwise.
     """
-    pass  # TODO: implement this
+    # TODO: implement this
+
 
 
 # ── TODO 3: Counted Versions ─────────────────────────────────────
