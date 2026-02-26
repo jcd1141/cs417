@@ -6,7 +6,7 @@ In Labs 8 and 9, you built hash tables — data structures that look up values i
 
 What if your data is sorted? A sorted list gives you structure you can exploit — but *how* you search it matters enormously. In this lab, you'll implement two search algorithms and discover exactly when the smarter one becomes worth the effort.
 
-**Starter files:** `search.py`, `test_search.py`
+**Starter files:** `search.py`, `test_search.py`, `analysis.ipynb`
 **Test command:** `pytest -v` (from your Lab10 root)
 
 ## Part 1: Project Setup
@@ -29,8 +29,9 @@ Lab10/
 1. Create the `src/`, `tests/`, and `notebooks/` directories
 2. Move `search.py` into `src/`
 3. Move `test_search.py` into `tests/`
-4. Keep `conftest.py` in the Lab10 root
-5. Verify: run `pytest -v` — all tests should **fail** (nothing is implemented yet)
+4. Move `analysis.ipynb` into `notebooks/`
+5. Keep `conftest.py` in the Lab10 root
+6. Verify: run `pytest -v` — all tests should **fail** (nothing is implemented yet)
 
 **Commit checkpoint:**
 ```bash
@@ -171,7 +172,7 @@ This is where you discover something the code alone doesn't show you.
 
 ### Opening the Notebook in Colab
 
-Once your notebook is pushed to GitHub:
+The starter notebook (`analysis.ipynb`) is already in your repo — you moved it to `notebooks/` in Part 1. Push your repo to GitHub first, then open it in Colab:
 
 ```
 https://colab.research.google.com/github/YOUR_USERNAME/YOUR_REPO/blob/main/labs/Lab10/notebooks/analysis.ipynb
@@ -179,9 +180,9 @@ https://colab.research.google.com/github/YOUR_USERNAME/YOUR_REPO/blob/main/labs/
 
 ### Working in Colab
 
-1. Click **File > Save a copy in Drive**
+1. Click **File > Save a copy in Drive** — this gives you an editable copy
 2. Paste your completed search functions (all four — original and counted versions) into the first code cell
-3. Run each cell and answer the questions
+3. Run each experiment cell, then answer the questions in the markdown cells below it
 
 ### What You'll Explore
 
