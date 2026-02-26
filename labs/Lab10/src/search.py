@@ -100,8 +100,15 @@ def sequential_search_counted(a_list, target):
         sequential_search_counted([4, 8, 2, 15, 17], 17)  → (True, 5)
         sequential_search_counted([4, 8, 2, 15, 17], 99)  → (False, 5)
     """
-    pass  # TODO: implement this
+    # TODO: implement this
+    comp = 0
 
+    for i in a_list:
+        comp += 1
+        if i == target:
+            return (True, comp)
+        
+    return (False, comp)
 
 def binary_search_counted(a_list, target):
     """
@@ -123,4 +130,19 @@ def binary_search_counted(a_list, target):
         binary_search_counted([2, 4, 8, 15, 17], 17)  → (True, 3)
         binary_search_counted([2, 4, 8, 15, 17], 99)  → (False, 3)
     """
-    pass  # TODO: implement this
+    # TODO: implement this
+    comp = 0
+    first = 0
+    last = len(a_list) - 1
+
+    while first <= last:
+        middle = (first + last) // 2
+        comp +=1
+        if a_list[middle] == target:
+            return (True, comp)
+        elif target < a_list[middle]:
+            last = middle - 1
+        else:
+            first = middle + 1
+
+    return (False, comp)
