@@ -62,7 +62,19 @@ def binary_search(a_list, target):
         True if target is found, False otherwise.
     """
     # TODO: implement this
+    first = 0
+    last = len(a_list) - 1
 
+    while first <= last:
+        middle = (first + last) // 2
+        if a_list[middle] == target:
+            return True
+        elif target < a_list[middle]:
+            last = middle - 1
+        else:
+            first = middle + 1
+
+    return False
 
 
 # ── TODO 3: Counted Versions ─────────────────────────────────────
