@@ -184,7 +184,26 @@ def _partition(a_list, first, last):
     Returns:
         The index where the pivot ended up (the split point).
     """
-    pass  # TODO: implement this
+    # TODO: implement this
+    pivot_value = a_list[first]
+    left_mark = first + 1
+    right_mark = last
+
+    done = False
+    while not done:
+        while left_mark <= right_mark and a_list[left_mark] <= pivot_value:
+            left_mark += 1
+
+        while left_mark <= right_mark and a_list[right_mark] >= pivot_value:
+            right_mark -= 1
+
+        if right_mark < left_mark:
+            done = True
+        else:
+            a_list[left_mark], a_list[right_mark] = a_list[right_mark], a_list[left_mark]
+
+    a_list[first], a_list[right_mark] = a_list[right_mark], a_list[first]
+    return right_mark
 
 
 def _quick_sort_helper(a_list, first, last):
