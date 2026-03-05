@@ -53,7 +53,15 @@ def _gap_insertion_sort(a_list, start, gap):
         start: The starting index of this sublist.
         gap: The distance between sublist elements.
     """
-    pass  # TODO: implement this
+    # TODO: implement this
+    for i in range(start + gap, len(a_list), gap):
+        current_value = a_list[i]
+        position = i
+        while position >= gap and a_list[position - gap] > current_value:
+            a_list[position] = a_list[position-gap]
+            position -= gap
+
+        a_list[position] = current_value
 
 
 def shell_sort(a_list):
