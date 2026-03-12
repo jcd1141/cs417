@@ -16,7 +16,10 @@ def parse_args_manual(argv):
     # TODO: Check if argv has at least 2 elements (program name + filename)
     # If not, print "Usage: wordcount_manual.py <filename>" to stderr and exit(1)
     # Otherwise return argv[1]
-    pass
+    if len(argv) < 2:
+        print("Usage: wordcount_manual.py <filename>", file=sys.stderr)
+        sys.exit(1)
+    return argv[1]
 
 
 def count_words(filepath):
@@ -36,7 +39,15 @@ def count_words(filepath):
     # TODO: Try to open and read the file
     # If FileNotFoundError, print "Error: file '<filepath>' not found" to stderr and exit(1)
     # Otherwise split on whitespace and return the count
-    pass
+    try:
+        with open(filepath, "r") as f:
+            text = f.read()
+            words = text.split()
+            return len(words)
+
+    except FileNotFoundError:
+        print(f"Error: file '{filepath}' not found", file=sys.stderr)
+        sys.exit(1)
 
 
 def main():
@@ -44,7 +55,10 @@ def main():
     # TODO: Call parse_args_manual with sys.argv
     # Call count_words with the filename
     # Print "<filename>: <count> words"
-    pass
+    filename = parse_args_manual(sys.argv)
+    count = count_words(filename)
+    print(f"{filename}: {count} words")
+
 
 
 if __name__ == "__main__":
