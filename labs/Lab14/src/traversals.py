@@ -1,3 +1,4 @@
+from collections import deque
 """
 Tree Traversals — Lab 14
 
@@ -66,7 +67,9 @@ def inorder(node):
     TODO: implement this
     """
     # TODO: implement this
-    pass
+    if node is None:
+        return []
+    return inorder(node.left) + [node.value] + inorder(node.right)
 
 # ── Task 3: Preorder Traversal (Self → Left → Right) ────────────────
 
@@ -79,7 +82,7 @@ def preorder(node):
     TODO: implement this
     """
     # TODO: implement this
-    pass
+
 
 # ── Task 4: Postorder Traversal (Left → Right → Self) ───────────────
 
@@ -92,7 +95,7 @@ def postorder(node):
     TODO: implement this
     """
     # TODO: implement this
-    pass
+    
 
 # ── Task 5: Level-Order Traversal (BFS) ─────────────────────────────
 
@@ -110,7 +113,6 @@ def levelorder(node):
     TODO: implement this
     """
     # TODO: implement this
-
 
 # ── Main ─────────────────────────────────────────────────────────────
 
