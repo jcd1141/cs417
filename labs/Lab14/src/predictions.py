@@ -28,10 +28,10 @@ from collections import deque
 # Fill in each list with the order you think that traversal visits nodes.
 # Use the integer values (e.g., [15, 9, 4, ...]).
 
-inorder_prediction = []       # TODO: fill in your prediction
-preorder_prediction = []      # TODO: fill in your prediction
-postorder_prediction = []     # TODO: fill in your prediction
-levelorder_prediction = []    # TODO: fill in your prediction
+inorder_prediction = [2, 4, 7, 9, 12, 15, 18, 21, 25]       # TODO: fill in your prediction
+preorder_prediction = [15, 9, 4, 2, 7, 12, 21, 18, 25]      # TODO: fill in your prediction
+postorder_prediction = [2, 7, 4, 12, 9, 18, 25, 21, 15]     # TODO: fill in your prediction
+levelorder_prediction = [15, 9, 21, 4, 12, 18, 25, 2, 7]    # TODO: fill in your prediction
 
 
 # ── Checking (don't modify below this line) ──────────────────────────
