@@ -143,7 +143,7 @@ def dfs(graph, start):
             continue
         visited.add(current)
         order.append(current)
-        
+
         for neighbor in graph.get_neighbors(current):
             stack.append(neighbor)
             # TODO: Add the neighbor to the stack
@@ -169,15 +169,24 @@ def find_path(graph, start, goal):
     # TODO: Add `start` to the frontier, mark it as visited.
     #        The start node has no parent — you don't need to add it
     #        to the parent map.
+    frontier.append(start)
+    visited.add(start)
 
     while frontier:
         # TODO: Dequeue the next node
-
+        current = frontier.popleft()
         # TODO: Check if `current` is the goal. If yes:
         #        - Trace back through `parent` from goal to start
         #        - Reverse the path and return it
         #        (Hint: build a list by following parent[node] until
         #         you reach start, then reverse)
+        if current == goal:
+            path = [current]
+            while current in parent:
+                current = parent[current]
+                path.append(current)
+            path.reverse()
+            return path
 
         for neighbor in graph.get_neighbors(current):
             pass
@@ -185,5 +194,8 @@ def find_path(graph, start, goal):
             #        - Mark it as visited
             #        - Record its parent: parent[neighbor] = current
             #        - Add it to the frontier
-
+            if neighbor not in visited:
+                visited.add(neighbor)
+                parent[neighbor] = current
+                frontier.append(neighbor)
     return []  # No path found
