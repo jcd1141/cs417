@@ -33,7 +33,8 @@ class DAGNode:
             name: Identifier for this task.
         """
         # TODO: Store name and initialize dependencies
-        pass
+        self.name = name
+        self.dependencies = set()
 
     def add_dependency(self, node: "DAGNode") -> None:
         """Add a dependency to this node.
