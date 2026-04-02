@@ -56,7 +56,11 @@ class DAGNode:
         # TODO: Reject self-loops (Task 2)
         # TODO: Reject cycles using has_ancestor (Task 4)
         # TODO: Add the dependency
-        pass
+        if node is self:
+            raise CycleError
+        if node.has_ancestor(self):
+            raise CycleError
+        self.dependencies.add(node)
 
     def has_ancestor(self, target: "DAGNode") -> bool:
         """Check if target is an ancestor of this node.
