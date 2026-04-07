@@ -151,7 +151,15 @@ def csv_to_json(
         >>> csv_to_json("roster.csv", "roster.json", type_hints={"grade": int})
     """
     # TODO: Implement this function
-    pass
+    rows = read_csv(csv_path)
+
+    if type_hints is not None:
+        for row in rows:
+            for key in type_hints:
+                if key in row:
+                    row[key] = type_hints[key](row[key])
+
+    write_json(json_path, rows)
 
 
 def json_to_csv(
@@ -180,4 +188,17 @@ def json_to_csv(
         # "tags" field from JSON is skipped — it can't be a flat CSV column
     """
     # TODO: Implement this function
-    pass
+    data = read_json(json_path)
+
+    rows = []
+
+    for record in data:
+        row = {}
+
+        for field in fieldnames:
+            if field in record:
+                row[field] = record[field]
+
+        rows.append(row)
+
+    write_csv(csv_path, rows, fieldnames)
