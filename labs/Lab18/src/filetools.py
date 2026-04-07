@@ -31,7 +31,15 @@ def read_csv(filepath: str) -> list[dict]:
         'Alice'
     """
     # TODO: Implement this function
-    pass
+    rows = []
+    f = open(filepath, encoding="utf-8")
+    reader = csv.DictReader(f)
+
+    for row in reader:
+        rows.append(row)
+
+    f.close()
+    return rows
 
 
 def read_json(filepath: str):
