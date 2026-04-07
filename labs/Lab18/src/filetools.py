@@ -62,7 +62,13 @@ def read_json(filepath: str):
         92
     """
     # TODO: Implement this function
-    pass
+    f = open(filepath, encoding="utf-8")
+
+    data = json.load(f)
+
+    f.close()
+
+    return data
 
 
 def write_csv(filepath: str, data: list[dict], fieldnames: list[str]) -> None:
