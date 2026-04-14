@@ -4,31 +4,27 @@ Your FastAPI grading server. Build each section as you work
 through the tasks. The TODOs tell you what to add and where.
 """
 
-from fastapi import FastAPI
+from fastapi import FastAPI, BackgroundTasks
+from fastapi.responses import JSONResponse
 from grading import grade
+import uuid
 
 app = FastAPI()
 
 grading_log = []
 completed = {}
+jobs = {}
+job_submission_map = {}
 
-# ---------------------------------------------------------------------------
-# Task 1: The Naive Server
-# ---------------------------------------------------------------------------
-# Import the grade function from grading.py, then create a POST /grade
-# endpoint that accepts {"student": ..., "lab": ...} and returns the score.
 
-# TODO: import grade from grading
-
-# TODO: POST /grade endpoint
 @app.post("/grade")
 def grade_endpoint(data: dict):
     student = data["student"]
     lab = data["lab"]
     slow = data.get("slow", False)
-    submission_id = data.get("submission_id")  # define submission_id
+    submission_id = data.get("submission_id")
 
-    if submission_id is not None and submission_id in completed:  # return cached result first
+    if submission_id is not None and submission_id in completed:
         return completed[submission_id]
 
     score = grade(student, lab, slow=slow)
@@ -42,25 +38,11 @@ def grade_endpoint(data: dict):
     grading_log.append(result)
 
     if submission_id is not None:
-        completed[submission_id] = result  # save result for future duplicate requests
+        completed[submission_id] = result
 
     return result
 
-# ---------------------------------------------------------------------------
-# Task 2: Retries Reveal a Problem
-# ---------------------------------------------------------------------------
-# Add a grading_log list that records every grading event.
-# Update POST /grade to (1) accept an optional "slow" field and pass it
-# to grade(), and (2) append each grading event to the log.
-# Add GET /log and POST /reset-log endpoints.
 
-# TODO: grading_log = []
-
-# TODO: update POST /grade to log events and support "slow"
-
-# TODO: GET /log endpoint
-
-# TODO: POST /reset-log endpoint
 @app.get("/log")
 def get_log():
     return {"entries": grading_log}
@@ -71,41 +53,80 @@ def reset_log():
     grading_log.clear()
     return {"status": "cleared"}
 
-# ---------------------------------------------------------------------------
-# Task 3: Idempotency Makes Retries Safe
-# ---------------------------------------------------------------------------
-# Add a completed dict that maps submission IDs to results.
-# Update POST /grade to check for an optional "submission_id" field —
-# if the ID is already in completed, return the cached result without
-# grading again or logging.
-# Add POST /reset-completed endpoint.
 
-# TODO: completed = {}
-
-# TODO: update POST /grade to check submission_id
-
-# TODO: POST /reset-completed endpoint
 @app.post("/reset-completed")
 def reset_completed():
     completed.clear()
     return {"status": "cleared"}
 
-# ---------------------------------------------------------------------------
-# Task 4: Honest About Time
-# ---------------------------------------------------------------------------
-# You'll need: from fastapi import BackgroundTasks
-#              from fastapi.responses import JSONResponse
-#
-# Add jobs dict, job_submission_map dict, and a job ID generator.
-# Create POST /grade-async (returns 202, runs grading in background).
-# Create a run_grade_job helper that does the actual grading.
-# Create GET /grade-jobs/{job_id} to check job status.
 
-# TODO: jobs = {}
-# TODO: job_submission_map = {}
+def run_grade_job(job_id: str, student: str, lab: int):
+    score = grade(student, lab, slow=True)
 
-# TODO: POST /grade-async endpoint
+    result = {
+        "student": student,
+        "lab": lab,
+        "score": score
+    }
 
-# TODO: run_grade_job helper function
+    grading_log.append(result)
+    jobs[job_id] = {
+        "status": "complete",
+        "result": result
+    }
 
-# TODO: GET /grade-jobs/{job_id} endpoint
+
+@app.post("/grade-async")
+def grade_async(data: dict, background_tasks: BackgroundTasks):
+    student = data["student"]
+    lab = data["lab"]
+    submission_id = data.get("submission_id")
+
+    if submission_id is not None and submission_id in job_submission_map:
+        existing_job_id = job_submission_map[submission_id]
+        job = jobs[existing_job_id]
+
+        if job["status"] == "pending":
+            return JSONResponse(
+                {"job_id": existing_job_id, "status": "accepted"},
+                status_code=202
+            )
+
+        return JSONResponse(
+            {
+                "job_id": existing_job_id,
+                "status": "complete",
+                "result": job["result"]
+            },
+            status_code=200
+        )
+
+    job_id = str(uuid.uuid4())
+    jobs[job_id] = {"status": "pending"}
+
+    if submission_id is not None:
+        job_submission_map[submission_id] = job_id
+
+    background_tasks.add_task(run_grade_job, job_id, student, lab)
+
+    return JSONResponse(
+        {"job_id": job_id, "status": "accepted"},
+        status_code=202
+    )
+
+
+@app.get("/grade-jobs/{job_id}")
+def get_grade_job(job_id: str):
+    if job_id not in jobs:
+        return JSONResponse({"error": "job not found"}, status_code=404)
+
+    job = jobs[job_id]
+
+    if job["status"] == "pending":
+        return {"job_id": job_id, "status": "pending"}
+
+    return {
+        "job_id": job_id,
+        "status": "complete",
+        "result": job["result"]
+    }

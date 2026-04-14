@@ -107,17 +107,32 @@ def submit_async(
     poll_interval: float = 0.5,
     max_polls: int = 20,
 ) -> dict:
-    """Task 4: Async submission with polling.
+    submission_id = f"{student}-lab{lab}"
 
-    POST to /grade-async with student, lab, and a stable submission_id.
-    Expect a 202 response with a job_id.
-    Poll GET /grade-jobs/{job_id} every poll_interval seconds.
-    When status is "complete", return the result dictionary.
-    Raise RuntimeError("polling timed out") if max_polls is exceeded.
-    """
-    # TODO: Implement
-    pass
+    response = requests.post(
+        f"{base_url}/grade-async",
+        json={
+            "student": student,
+            "lab": lab,
+            "submission_id": submission_id
+        }
+    )
 
+    if response.status_code != 202:
+        raise RuntimeError(f"Request failed with status code {response.status_code}")
+
+    job_id = response.json()["job_id"]
+
+    for _ in range(max_polls):
+        poll_response = requests.get(f"{base_url}/grade-jobs/{job_id}")
+        data = poll_response.json()
+
+        if data["status"] == "complete":
+            return data["result"]
+
+        time.sleep(poll_interval)
+
+    raise RuntimeError("polling timed out")
 
 # ---------------------------------------------------------------------------
 # Bonus Task 5: The Smart Client
