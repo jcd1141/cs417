@@ -69,7 +69,23 @@ def get_prices_batch(coin_ids: list, api_key: str) -> dict:
     # 2. Make ONE GET request with the joined string as "ids"
     # 3. Check status code
     # 4. Parse JSON and flatten into {coin_id: price} dict
-    pass
+    url = f"{BASE_URL}/simple/price"
+
+    response = requests.get(
+        url,
+        params={
+            "ids": ",".join(coin_ids),
+            "vs_currencies": "usd",
+            "x_cg_demo_api_key": api_key
+        }
+    )
+
+    if response.status_code != 200:
+        raise RuntimeError(f"Request failed with status code {response.status_code}")
+
+    data = response.json()
+
+    return {coin_id: float(data[coin_id]["usd"]) for coin_id in coin_ids}
 
 
 class CoinCache:
@@ -87,9 +103,10 @@ class CoinCache:
         Args:
             ttl_seconds: How many seconds a cached entry stays fresh.
         """
-        # TODO: Task 3
-        # Set up: ttl_seconds, _store (empty dict), hits (0), misses (0)
-        pass
+        self.ttl_seconds = ttl_seconds
+        self._store = {}
+        self.hits = 0
+        self.misses = 0
 
     def put(self, coin_id: str, price: float):
         """
@@ -99,9 +116,10 @@ class CoinCache:
             coin_id: The coin identifier
             price: The USD price to cache
         """
-        # TODO: Task 3
-        # Store {"price": price, "timestamp": time.time()} in _store
-        pass
+        self._store[coin_id] = {
+            "price": price,
+            "timestamp": time.time()
+        }
 
     def get(self, coin_id: str):
         """
@@ -113,9 +131,12 @@ class CoinCache:
         Returns:
             The cached price as a float, or None if not found / expired.
         """
-        # TODO: Task 3 — basic version (just check if key exists)
-        # TODO: Task 4 — add TTL check (is the entry still fresh?)
-        pass
+        if coin_id in self._store:
+            self.hits += 1
+            return self._store[coin_id]["price"]
+
+        self.misses += 1
+        return None
 
 
 def get_price_cached(coin_id: str, api_key: str, cache: CoinCache) -> float:
