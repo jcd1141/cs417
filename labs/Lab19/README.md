@@ -166,8 +166,7 @@ Implement three things:
 
 ```bash
 python -m pytest tests/ -k "TestCacheBasic" -v
-git add -A && git commit -m "Lab 19: Implement basic C
-oinCache"
+git add -A && git commit -m "Lab 19: Implement basic CoinCache"
 ```
 
 ## Task 4: Add TTL Expiration

@@ -131,13 +131,18 @@ class CoinCache:
         Returns:
             The cached price as a float, or None if not found / expired.
         """
-        if coin_id in self._store:
-            self.hits += 1
-            return self._store[coin_id]["price"]
+        if coin_id not in self._store:
+            self.misses += 1
+            return None
 
-        self.misses += 1
-        return None
+        entry = self._store[coin_id]
 
+        if time.time() - entry["timestamp"] > self.ttl_seconds:
+            self.misses += 1
+            return None
+
+        self.hits += 1
+        return entry["price"]
 
 def get_price_cached(coin_id: str, api_key: str, cache: CoinCache) -> float:
     """
@@ -156,8 +161,11 @@ def get_price_cached(coin_id: str, api_key: str, cache: CoinCache) -> float:
     Returns:
         The USD price as a float.
     """
-    # TODO: Task 5
-    # 1. Try cache.get(coin_id)
-    # 2. If not None, return it (cache hit!)
-    # 3. If None, call get_price(), store with cache.put(), return price
-    pass
+    cached_price = cache.get(coin_id)
+
+    if cached_price is not None:
+        return cached_price
+
+    price = get_price(coin_id, api_key)
+    cache.put(coin_id, price)
+    return price
