@@ -8,7 +8,7 @@ from fastapi import FastAPI
 from grading import grade
 
 app = FastAPI()
-
+grading_log = []
 
 # ---------------------------------------------------------------------------
 # Task 1: The Naive Server
@@ -23,14 +23,19 @@ app = FastAPI()
 def grade_endpoint(data: dict):
     student = data["student"]
     lab = data["lab"]
-    score = grade(student, lab)
+    slow = data.get("slow", False)
 
-    return {
+    score = grade(student, lab, slow=slow)
+
+    result = {
         "student": student,
         "lab": lab,
         "score": score
     }
 
+    grading_log.append(result)
+
+    return result
 # ---------------------------------------------------------------------------
 # Task 2: Retries Reveal a Problem
 # ---------------------------------------------------------------------------
@@ -46,7 +51,15 @@ def grade_endpoint(data: dict):
 # TODO: GET /log endpoint
 
 # TODO: POST /reset-log endpoint
+@app.get("/log")
+def get_log():
+    return {"entries": grading_log}
 
+
+@app.post("/reset-log")
+def reset_log():
+    grading_log.clear()
+    return {"status": "cleared"}
 
 # ---------------------------------------------------------------------------
 # Task 3: Idempotency Makes Retries Safe
