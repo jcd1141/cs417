@@ -26,3 +26,10 @@ class StudentRow(TypedDict):
 def read_roster(path: str) -> list[StudentRow]:
     # pretend this reads a CSV
     return [{"name": "Alice", "email": "alice@uni.edu", "grade": "92"}]
+
+class User(TypedDict):
+    id: int
+    name: str
+
+def make_badge(user: User) -> str:
+    return f"#{user['id']}-{user['name']}"
