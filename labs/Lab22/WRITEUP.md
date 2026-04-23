@@ -55,3 +55,7 @@ Part 4:
 Part 5:
 
     The solution I would reject would be C. While it works, it is by far the most inneficient and least optimized of the group. For every unique item, it scans the list again. This makes the time complexity around O(n^2) in worse cases, especially when there are a lot of distinct items. In comparison, A and B both use Counter which is closer to O(n) for counting, so they scale much better. There is also a type hint problem since the function says it returns list[int], but it actually returns tuples. The mypy caught this. I would suggest replacing the repeated count() calls with Counter(items) and fixing the return type to list[tuple[str, int]]. That would keep the same behavior while making it much faster and cleaner.
+
+Test Hard:
+
+    Running the hard tests did not change my ranking. All three solutions handled edge cases like empty input and k=0 correctly. The differences between them are still mainly performance and code quality, not correctness.
