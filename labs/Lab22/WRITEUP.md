@@ -20,4 +20,27 @@ Best: A is the best because it only counts everything once with Counter, then us
 
 Mid: B is still good, just not as efficient. It also uses Counter, but then it builds a list of all items and sorts the entire thing with entries.sort(...). That means even if k is small, it still sorts everything which is extra work. The good part is it’s really easy to read and understand since the sort key (-count, i) is very clear. It's not as optimized as A.
 
-Worst: C is the worst one. It loops through the list, then for every item it calls items.count(item), which means it keeps scanning the whole list over and over. That’s slower with bigger inputs. It also has a wrong type hint since it says list[int] but actually returns tuples. It works, but it’s inefficient and not as clean as the other two.
+Worst: C is the worst one. It loops through the list, then for every item it calls items.count(item), which means it keeps scanning the whole list over and over. That’s slower with bigger inputs. It works, but it’s inefficient and not as clean as the other two.
+
+Part 3:
+
+=== Regime 1 — small fixed vocabulary (50 distinct items) ===
+         n |   unique |     A (heap) |     B (sort) |     C (loop)
+------------------------------------------------------------------------
+       100 |       50 |       0.07ms |       0.05ms |       0.11ms
+     1,000 |       50 |       0.09ms |       0.06ms |       0.74ms
+    10,000 |       50 |       1.06ms |       0.47ms |       7.37ms
+   100,000 |       50 |       6.60ms |       5.22ms |      71.41ms
+
+=== Regime 2 — vocabulary scales with n (unique ≈ n/2) ===
+         n |   unique |     A (heap) |     B (sort) |     C (loop)
+------------------------------------------------------------------------
+       100 |       50 |       0.06ms |       0.02ms |       0.07ms
+     1,000 |      500 |       0.26ms |       0.21ms |       7.39ms
+    10,000 |    5,000 |       2.12ms |       3.50ms |     751.32ms
+
+mypy --strict src/solution_a.py src/solution_b.py src/solution_c.py
+src/solution_c.py:29: error: Incompatible return value type (got "list[tuple[str, int]]", expected "list[int]")  [return-value]
+Found 1 error in 1 file (checked 3 source files)
+
+Paragraph: The benchmark mostly confirmed my ranking, but it also showed some differences. In Regime 1, B was actually a little faster than A at every size, which makes sense since the number of unique items is small so sorting isn’t that expensive. But in Regime 2, A becomes better as things scale (at 10,000 A is 2.12ms while B is 3.50ms), so A handles larger and more complex inputs better. C was by far the worst in both, especially in Regime 2 where it jumps to 751.32ms, which shows how bad the repeated count() calls are. mypy said said the return type was wrong for Solution C, expecting list[int] but getting list[tuple[str, int]], so the type hint is incorrect. The difference between the two regimes shows that B is fine when the number of unique items is small, but A is better when the data grows, and C really doesn’t fit either case.
