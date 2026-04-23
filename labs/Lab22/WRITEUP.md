@@ -39,8 +39,15 @@ Part 3:
      1,000 |      500 |       0.26ms |       0.21ms |       7.39ms
     10,000 |    5,000 |       2.12ms |       3.50ms |     751.32ms
 
-mypy --strict src/solution_a.py src/solution_b.py src/solution_c.py
-src/solution_c.py:29: error: Incompatible return value type (got "list[tuple[str, int]]", expected "list[int]")  [return-value]
-Found 1 error in 1 file (checked 3 source files)
+    mypy --strict src/solution_a.py src/solution_b.py src/solution_c.py
+    src/solution_c.py:29: error: Incompatible return value type (got "list[tuple[str, int]]", expected "list[int]")  [return-value]
+    Found 1 error in 1 file (checked 3 source files)
 
-Paragraph: The benchmark mostly confirmed my ranking, but it also showed some differences. In Regime 1, B was actually a little faster than A at every size, which makes sense since the number of unique items is small so sorting isn’t that expensive. But in Regime 2, A becomes better as things scale (at 10,000 A is 2.12ms while B is 3.50ms), so A handles larger and more complex inputs better. C was by far the worst in both, especially in Regime 2 where it jumps to 751.32ms, which shows how bad the repeated count() calls are. mypy said said the return type was wrong for Solution C, expecting list[int] but getting list[tuple[str, int]], so the type hint is incorrect. The difference between the two regimes shows that B is fine when the number of unique items is small, but A is better when the data grows, and C really doesn’t fit either case.
+    Paragraph: The benchmark mostly confirmed my ranking, but it also showed some differences. In Regime 1, B was actually a little faster than A at every size, which makes sense since the number of unique items is small so sorting isn’t that expensive. But in Regime 2, A becomes better as things scale (at 10,000 A is 2.12ms while B is 3.50ms), so A handles larger and more complex inputs better. C was by far the worst in both, especially in Regime 2 where it jumps to 751.32ms, which shows how bad the repeated count() calls are. mypy said said the return type was wrong for Solution C, expecting list[int] but getting list[tuple[str, int]], so the type hint is incorrect. The difference between the two regimes shows that B is fine when the number of unique items is small, but A is better when the data grows, and C really doesn’t fit either case.
+
+Part 4:
+   
+A: Yes, my ranking changes a little here. If the input is always under 50 items and it only runs once a week, I would probably put B over A. B is easier to read and understand right away, and in a small workload the extra sorting really does not matter much. The benchmark also showed B was a little faster in Regime 1, so in this case I think B makes the most sense. C is still last because it still does repeated work and still has the wrong type hint.
+
+
+B: Here my ranking stays A, then B, then C. If this runs 10,000 times per second and the workload looks like Regime 2, performance matters a lot more, and A clearly handled that better than B in the benchmark. B is still readable, but sorting everything every time becomes a bigger problem when the number of unique items grows. C becomes even worse here because the repeated count() calls would be way too slow, and the bad type hint is another thing you would not want in an important code path. In this case the extra efficiency in A matters more than the extra simplicity in B.
